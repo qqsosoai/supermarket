@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.BillMapper">
+    <select id="findByLimitBillName" resultMap="billToProvider">
+      SELECT m.* from market_bill m
+        <trim prefix="where" prefixOverrides="and|or" >
+        <if test="billName!=null and billName!=''">
+            AND  m.productName LIKE concat('%',#{billName},'%')
+        </if>
+        <if test="proId!=null and proId!=''">
+            AND m.proId=#{proId}
+        </if>
+        <if test="isPay!=null and isPay!=''">
+            AND m.isPayment=#{isPay}
+        </if>
+    </trim>
+        <trim prefix="limit">
+            <if test="pageIndex!=null and pageSize!=null">
+                #{pageIndex},#{pageSize}
+            </if>
+        </trim>
+    </select><!--账单条件分页查询-->
+    <select id="findById" resultMap="billToProvider">
+      select m.* FROM  market_bill m WHERE m.id=#{id}
+    </select><!--根据ID查询具体账单-->
+    <select id="findBySqlCount" resultType="Integer">
+      SELECT count(1) from market_bill m
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="billName!=null and billName!=''">
+                AND  m.productName LIKE concat('%',#{billName},'%')
+            </if>
+            <if test="proId!=null and proId!=''">
+                AND m.proId=#{proId}
+            </if>
+            <if test="isPay!=null and isPay!=''">
+                AND m.isPayment=#{isPay}
+            </if>
+        </trim>
+    </select><!--账单条件查询总记录数-->
+    <insert id="addByBill" parameterType="Bill">
+        INSERT  INTO market_bill(proId,billCode,productName,
+            productDesc,
+        productUnit,productCount,totalPrice,isPayment,createdBy,creationDate)
+        VALUES
+        (#{proId.id},#{billCode},#{productName},
+                #{productDesc},
+            #{productUnit},#{productCount},#{totalPrice},#{isPayment},
+            #{createdBy},now())
+    </insert><!--新增账单-->
+    <delete id="delByBill" parameterType="Bill">
+        DELETE FROM market_bill where
+        <trim>
+            <choose>
+                <when test="id!=null and id!=''">
+                    id=#{id}
+                </when>
+                <when test="productName!=null and productName!=''">
+                    productName LIKE concat('%',#{productName},'%')
+                </when>
+                <when test="isPayment!=null and isPayment!=''">
+                    isPayment=#{isPayment}
+                </when>
+            </choose>
+        </trim>
+    </delete><!--删除账单根据ID或者账单名称、是否付款-->
+    <update id="updateByBill" parameterType="Bill">
+        UPDATE market_bill
+        <trim prefix="set">
+            <if test="proId.id!=null and proId.id!=''">
+                proId=#{proId.id},
+            </if>
+            <if test="productName!=null and productName!=''">
+                productName=#{productName},
+            </if>
+            <if test="productDesc!=null and productDesc!=''">
+                productDesc=#{productDesc},
+            </if>
+            <if test="productUnit!=null and productUnit!=''">
+                productUnit=#{productUnit},
+            </if>
+            <if test="productCount!=null and productCount!=''">
+                productCount=#{productCount},
+            </if>
+            <if test="totalPrice!=null and totalPrice!=''">
+                totalPrice=#{totalPrice},
+            </if>
+            <if test="isPayment!=null and isPayment!=''">
+                isPayment=#{isPayment},
+            </if>
+            <if test="modifyBy!=null and modifyBy!=''">
+                modifyBy=#{modifyBy},
+            </if>
+        </trim>
+        modifyDate=now()
+        WHERE  id=#{id};
+    </update><!--修改账单-->
+    <resultMap id="billToProvider" type="Bill">
+        <id property="id" column="id"/>
+        <result property="billCode" column="billCode"/>
+        <result property="productName" column="productName"/>
+        <result property="productDesc" column="productDesc"/>
+        <result property="productUnit" column="productUnit"/>
+        <result property="productCount" column="productCount"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="isPayment" column="isPayment"/>
+        <result property="createdBy" column="createdBy"/>
+        <result property="creationDate" column="creationDate"/>
+        <result property="modifyBy" column="modifyBy"/>
+        <result property="modifyDate" column="modifyDate"/>
+        <association property="proId" javaType="Provider" column="proId" select="findProvider"/>
+    </resultMap><!--用于多对一-->
+    <select id="findProvider" resultType="Provider">
+        SELECT * FROM  market_provider m WHERE m.id=#{xxx};
+    </select><!--用于多对一-->
+</mapper>

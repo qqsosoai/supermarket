@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+">
+    <context:component-scan base-package="cn.bdqn.service"/>
+    <!--读取jdbc4要素-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!--配置dbcp数据源-->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driverClass}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--配置session工厂-->
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+    <!--生成mapper实现类-->
+    <bean id="billDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="cn.bdqn.dao.BillMapper"/>
+        <property name="sqlSessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id="providerDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="sqlSessionFactory" ref="sessionFactory"/>
+        <property name="mapperInterface" value="cn.bdqn.dao.ProviderMapper"/>
+    </bean>
+    <bean id="userDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="cn.bdqn.dao.UserMapper"/>
+        <property name="sqlSessionFactory" ref="sessionFactory"/>
+    </bean>
+    <!--生成service层-->
+    <bean id="billService" class="cn.bdqn.service.impl.BillServiceImpl"/>
+    <bean id="providerService" class="cn.bdqn.service.impl.ProviderServiceImpl"/>
+    <bean id="userService" class="cn.bdqn.service.impl.UserServiceImpl"/>
+    <!--配置事务-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:advice transaction-manager="transactionManager" id="transactionInterceptor">
+        <tx:attributes>
+            <tx:method name="find*" isolation="DEFAULT" propagation="REQUIRED" read-only="true" rollback-for="Exception"/>
+            <tx:method name="add*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name="del*" isolation="DEFAULT" propagation="REQUIRED" rollback-for="Exception"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--织入事务-->
+    <aop:config>
+        <aop:pointcut id="myTransaction" expression="execution(* * ..service.*.*(..))"/>
+        <aop:advisor advice-ref="transactionInterceptor" pointcut-ref="myTransaction"/>
+    </aop:config>
+
+
+</beans>

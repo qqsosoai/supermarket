@@ -1,0 +1,76 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.ProviderMapper">
+    <select id="findByLimitProName" resultType="Provider">
+        select m.* from market_provider m
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="proName!=null and proName!=''">
+                AND proName LIKE  concat('%',#{proName},'%')
+            </if>
+        </trim>
+        <trim prefix="limit">
+            <if test="pageIndex!=null and pageSize!=null">
+                #{pageIndex},#{pageSize}
+            </if>
+        </trim>
+    </select><!--根据用户输入供应商名称分页查询-->
+    <select id="findBySqlCount" resultType="Integer">
+        SELECT count(1) FROM  market_provider
+        <if test="proName!=null and proName!=''">
+            WHERE  proName LIKE concat('%',#{proName},'%')
+        </if>
+    </select><!--根据用户输入条件查询总记录数-->
+    <select id="findById" resultType="Provider">
+        SELECT m.* from market_provider m WHERE m.id=#{id}
+    </select><!--根据ID查询具体供应商-->
+    <select id="findByProviderToBill" resultType="Provider">
+        SELECT m.id,m.proName FROM  market_provider m
+    </select><!--查询所有供应商ID与名称-->
+    <insert id="addProvider" parameterType="Provider">
+        INSERT into market_provider(proCode,proName,proDesc,proContact
+        ,proPhone,proAddress,proFax,createdBy,creationDate)
+        values(#{proCode},#{proName},#{proDesc},#{proContact},#{proPhone}
+        ,#{proAddress},#{proFax},#{createdBy},now());
+    </insert><!--新增供应商-->
+    <update id="updateProvider" parameterType="Provider">
+        UPDATE  market_provider
+        <trim prefix="set">
+            <if test="proName!=null and proName!=''">
+                proName=#{proName},
+            </if>
+            <if test="proDesc!=null and proDesc!=''">
+                proDesc=#{proDesc},
+            </if>
+            <if test="proContact!=null and proContact!=''">
+                proContact=#{proContact},
+            </if>
+            <if test="proPhone!=null and proPhone!=''">
+                proPhone=#{proPhone},
+            </if>
+            <if test="proAddress!=null and proAddress!=''">
+                proAddress=#{proAddress},
+            </if>
+            <if test="proFax!=null and proFax!=''">
+                proFax=#{proFax},
+            </if>
+            <if test="modifyBy!=null and modifyBy!=''">
+                modifyBy=#{modifyBy},
+            </if>
+        </trim>
+        modifyDate=now()
+        WHERE id=#{id};
+    </update><!--修改供应商信息-->
+    <delete id="delProvider" parameterType="Provider">
+        DELETE from market_provider WHERE
+        <trim>
+            <choose>
+                <when test="id!=null and id!=''">
+                    id=#{id}
+                </when>
+                <when test="proName!=null and proName!=''">
+                    proName LIKE concat('%',#{proName},'%')
+                </when>
+            </choose>
+        </trim>
+    </delete><!--删除供应商根据id或供应商名称模糊删除-->
+</mapper>

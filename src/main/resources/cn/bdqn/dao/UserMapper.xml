@@ -1,0 +1,76 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.UserMapper">
+    <select id="findByLimitName" resultType="User">
+        SELECT m.* FROM  market_user m
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="userName!=null and userName!=''">
+                userName LIKE concat('%',#{userName},'%')
+            </if>
+        </trim>
+        <trim prefix="limit">
+            <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
+                limit #{pageIndex},#{pageSize}
+            </if>
+        </trim>
+    </select><!--根据用户名模糊查询分页-->
+    <select id="findByNameSqlCount" resultType="Integer">
+        SELECT COUNT(1) FROM  market_user
+        <trim prefix="where">
+            <if test="userName!=null and userName!=''">
+                userName LIKE concat('%',#{userName},'%')
+            </if>
+        </trim>
+    </select><!--根据用户名模糊查询总记录数-->
+    <select id="findById" resultType="User">
+        SELECT m.* FROM  market_user m
+        WHERE  userId=#{userId};
+    </select><!--根据ID查询用户-->
+    <select id="findByName" resultType="User">
+        SELECT * from market_user WHERE userCode=#{username}
+    </select><!--根据用户名查询用户-->
+    <insert id="addUser" parameterType="User">
+        INSERT INTO  market_user(userCode,userName,userPassword,sex,birthday,
+        phone,address,userType,createdBy,creationDate)
+        VALUES(#{userCode},#{userName},#{userPassword},#{sex},#{birthday},#{phone}
+        ,#{address},#{userType},#{createdBy},now())
+    </insert><!--新增用户-->
+    <update id="updateUser" parameterType="User">
+        UPDATE market_user
+        <trim prefix="set">
+            <if test="userName!=null and userName!=''">
+                userName=#{userName},
+            </if>
+            <if test="sex!=null and sex!=''">
+                sex=#{sex},
+            </if>
+            <if test="birthday!=null and birthday!=''">
+                birthday=#{birthday},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="address!=null and address!=''">
+                address=#{address},
+            </if>
+            <if test="modifyBy!=null and modifyBy!=''">
+                modifyBy=#{modifyBy},
+            </if>
+        </trim>
+        modifyDate=now()
+        WHERE userId=#{userId}
+    </update><!--更新用户-->
+    <delete id="delUser" parameterType="User">
+        DELETE FROM  market_user where
+        <trim>
+            <choose>
+                <when test="userId!=null and userId!=''">
+                    userId=#{userId}
+                </when>
+                <when test="userName!=null and userName!=''">
+                    userName LIKE concat('%',#{userName},'%')
+                </when>
+            </choose>
+        </trim>
+    </delete><!--删除用户-->
+</mapper>
