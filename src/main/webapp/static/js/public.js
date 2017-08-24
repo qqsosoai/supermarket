@@ -52,13 +52,6 @@ function isValidate(regex,jqeury,errorText) {//验证方法
         }
     }
 }
-function ajax(url,param,functions) {
-    $.post(url,{"pageIndex":param.pageIndex,
-            "name":param.name,
-            "proId":param.proId,
-            "isPay":param.isPay},
-        functions,"json");
-}
 function isFocus(ob){
     $(ob).parent().removeClass();
     $(ob).next().html("");
