@@ -36,4 +36,11 @@ public interface ProviderService extends SuperService<Provider>{
      * @return 返回供应商详情
      */
     Provider findById(Integer id)throws Exception;
+
+    /**
+     * 根据ID删除供应商，当供应商下面由账单则不删除
+     * @param id 供应商ID
+     * @return 删除是否成功
+     */
+    boolean deleteByBilldel(Integer id)throws Exception;
 }

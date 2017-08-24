@@ -37,4 +37,6 @@ public interface UserService extends SuperService<User> {
      * @return
      */
     User findByName(String username);
+
+    boolean updatePassword(Integer id,String password)throws Exception;
 }

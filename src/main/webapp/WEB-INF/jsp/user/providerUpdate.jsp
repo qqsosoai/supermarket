@@ -5,8 +5,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>超市账单管理系统</title>
-    <link rel="stylesheet" href="../../static/css/public.css"/>
-    <link rel="stylesheet" href="../../static/css/style.css"/>
+    <link rel="stylesheet" href="/static/css/public.css"/>
+    <link rel="stylesheet" href="/static/css/style.css"/>
 </head>
 <body>
 <!--头部-->
@@ -14,8 +14,8 @@
     <h1>超市账单管理系统</h1>
 
     <div class="publicHeaderR">
-        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
-        <a href="login.html">退出</a>
+        <p><span>下午好！</span><span style="color: #fff21b"> ${sessionScope.user.userName}</span> , 欢迎你！</p>
+        <a href="/login.html/out">退出</a>
     </div>
 </header>
 <!--时间-->
@@ -29,11 +29,11 @@
         <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
         <nav>
             <ul class="list">
-                <li><a href="billList.html">账单管理</a></li>
-                <li id="active"><a href="providerList.html">供应商管理</a></li>
-                <li><a href="userList.html">用户管理</a></li>
-                <li><a href="password.html">密码修改</a></li>
-                <li><a href="login.html">退出系统</a></li>
+                <li><a href="/bill/main.html">账单管理</a></li>
+                <li id="active"><a href="/pro/main.html">供应商管理</a></li>
+                <c:if test="${sessionScope.user.userType!=3}"><li><a href="/user/main.html">用户管理</a></li></c:if>
+                <li><a href="/password.html">密码修改</a></li>
+                <li><a href="/login.html/out">退出系统</a></li>
             </ul>
         </nav>
     </div>
@@ -43,51 +43,52 @@
             <span>供应商管理页面 >> 供应商修改页</span>
         </div>
         <div class="providerAdd">
-            <form action="#">
+            <form action="/pro/update.html" method="post" onsubmit="return isSubmit()">
                 <!--div的class 为error是验证错误，ok是验证成功-->
+                <input type="hidden" name="id" value="${pro.id}"/>
                 <div class="">
-                    <label for="providerId">供应商编码：</label>
-                    <input type="text" name="providerId" id="providerId" placeholder="PRO-CODE—001"/>
+                    <label for="proCode">供应商编码：</label>
+                    <input type="text" name="proCode" id="proCode" value="${pro.proCode}" onblur="isProCode()" onfocus="isFocus(this)" placeholder="PRO-CODE—001"/>
                     <span>*</span>
                 </div>
                 <div>
-                    <label for="providerName">供应商名称：</label>
-                    <input type="text" name="providerName" id="providerName" placeholder="测试供应商001"/>
+                    <label for="proName">供应商名称：</label>
+                    <input type="text" name="proName" id="proName" value="${pro.proName}" onblur="isProName()" onfocus="isFocus(this)" placeholder="测试供应商001"/>
                     <span >*</span>
                 </div>
                 <div>
-                    <label for="people">联系人：</label>
-                    <input type="text" name="people" id="people" placeholder="韩露"/>
+                    <label for="proContact">联系人：</label>
+                    <input type="text" name="proContact" id="proContact" value="${pro.proContact}" onblur="isProContact()" onfocus="isFocus(this)" placeholder="韩露"/>
                     <span>*</span>
 
                 </div>
                 <div>
-                    <label for="phone">联系电话：</label>
-                    <input type="text" name="phone" id="phone" placeholder="15918230478"/>
+                    <label for="proPhone">联系电话：</label>
+                    <input type="text" name="proPhone" id="proPhone" value="${pro.proCode}" onblur="isProPhone()" onfocus="isFocus(this)" placeholder="15918230478"/>
                     <span></span>
                 </div>
                 <div>
-                    <label for="address">联系地址：</label>
-                    <input type="text" name="address" id="address" placeholder="北京"/>
-                    <span></span>
-
-                </div>
-                <div>
-                    <label for="fax">传真：</label>
-                    <input type="text" name="fax" id="fax" placeholder="15918230478"/>
+                    <label for="proAddress">联系地址：</label>
+                    <input type="text" name="proAddress" id="proAddress" value="${pro.proAddress}" onblur="isProAddress()" onfocus="isFocus(this)" placeholder="北京"/>
                     <span></span>
 
                 </div>
                 <div>
-                    <label for="describe">描述：</label>
-                    <input type="text" name="describe" id="describe" placeholder="描述"/>
+                    <label for="proFax">传真：</label>
+                    <input type="text" name="proFax" id="proFax" value="${pro.proFax}" onblur="isProFax()" onfocus="isFocus(this)" placeholder="15918230478"/>
+                    <span></span>
+
+                </div>
+                <div>
+                    <label for="proDesc">描述：</label>
+                    <input type="text" name="proDesc" id="proDesc" value="${pro.proDesc}" onblur="isProDesc()" onfocus="isFocus(this)" placeholder="描述"/>
                     <span></span>
 
                 </div>
                 <div class="providerAddBtn">
                     <!--<a href="#">保存</a>-->
                     <!--<a href="providerList.html">返回</a>-->
-                    <input type="button" value="保存" onclick="history.back(-1)"/>
+                    <input type="submit" value="保存"/>
                     <input type="button" value="返回" onclick="history.back(-1)"/>
                 </div>
             </form>
@@ -98,7 +99,9 @@
 <footer class="footer">
     版权归北大青鸟
 </footer>
-<script src="../../static/js/time.js"></script>
-
+<script src="/static/js/time.js"></script>
+<script src="/static/js/jquery-1.8.3.min.js"></script>
+<script src="/static/js/public.js"></script>
+<script src="/static/js/proUpdate.js"></script>
 </body>
 </html>

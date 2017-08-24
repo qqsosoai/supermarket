@@ -24,7 +24,6 @@
       <artifactId>bcprov-ext-jdk15on</artifactId>
       <version>1.50</version>
     </dependency>
-
     <!-- fastjson -->
     <dependency>
       <groupId>com.alibaba</groupId>

@@ -2,6 +2,7 @@ package cn.bdqn.controller;
 
 import cn.bdqn.bean.User;
 import cn.bdqn.service.UserService;
+import cn.bdqn.util.md5.MyMd5;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Created by hasee on 2017/8/8.
@@ -26,9 +30,9 @@ public class LoginController {
     public String login(User user, HttpSession session, Model model){
         User loginUser = service.findByName(user.getUserCode());
         if (loginUser!=null){//判断是否有该账号
-            if (loginUser.getUserPassword().equals(user.getUserPassword())){//判断密码是否正确
+            if (MyMd5.isMd5String(user.getUserPassword(),loginUser.getUserPassword())){//判断密码是否正确
                 session.setAttribute("user",loginUser);
-                return "user/welcome";
+                return "redirect:/user/welcome.html";
             }else{//密码输入不正确
                 model.addAttribute("message","pass");
                 return "login";
@@ -43,5 +47,47 @@ public class LoginController {
     public String outLogin(HttpSession session){
         session.invalidate();
         return "redirect:/login.html";
+    }
+    @RequestMapping("/password.html")//跳转登录页面
+    public String password(){
+        return "user/password";
+    }
+    @RequestMapping("/validate.html")//验证原密码是否正确
+    public void ajax(HttpSession session, String oldPassword, HttpServletResponse response){
+        User user = (User) session.getAttribute("user");
+        try {
+            PrintWriter writer = response.getWriter();
+            boolean flag=false;
+            if (MyMd5.isMd5String(oldPassword,user.getUserPassword())){//判断用户输入原密码是否正确
+                flag=true;
+            }
+            writer.print("{\"flag\":\""+flag+"\"}");
+            writer.flush();writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @RequestMapping("/submit.html")//处理用户修改密码请求
+    public String ajax(String oldPassword,String newPassword,String reNewPassword,HttpSession session){
+        User user = (User) session.getAttribute("user");
+        boolean flag=false;
+        if (MyMd5.isMd5String(oldPassword,user.getUserPassword())){
+            try {
+                newPassword= MyMd5.toMd5String(newPassword);//将用户输入的新密码加密
+                if (service.updatePassword(user.getUserId(),newPassword)){
+                    user.setUserPassword(newPassword);
+                    flag=true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{//用户跳过前台js验证
+            return "redirect:/login.html.out";
+        }
+        if (flag){
+            return "redirect:/user/welcome.html?flag=ok";
+        }else{
+            return "redirect:/user/welcome.html?flag=error";
+        }
     }
 }

@@ -31,9 +31,9 @@
         <nav>
             <ul class="list">
                 <li id="active"><a href="/bill/main.html">账单管理</a></li>
-                <li><a href="providerList.html">供应商管理</a></li>
-                <li><a href="userList.html">用户管理</a></li>
-                <li><a href="password.html">密码修改</a></li>
+                <li><a href="/pro/main.html">供应商管理</a></li>
+                <c:if test="${sessionScope.user.userType!=3}"><li><a href="/user/main.html">用户管理</a></li></c:if>
+                <li><a href="/password.html">密码修改</a></li>
                 <li><a href="/login.html/out">退出系统</a></li>
             </ul>
         </nav>
@@ -44,26 +44,27 @@
             <span>账单管理页面 >> 订单添加页面</span>
         </div>
         <div class="providerAdd">
-            <form action="/bill/update.html" method="post" onsubmit="">
+            <form action="/bill/update.html" method="post" onsubmit="return isSubmit()">
                 <!--div的class 为error是验证错误，ok是验证成功-->
+                <input type="hidden" name="id" value="${bill.id}"/>
                 <div>
-                    <label for="providerName">商品名称：</label>
-                    <input type="text" name="productName" value="${bill.productName}" id="providerName" placeholder="123"/>
+                    <label for="billName">商品名称：</label>
+                    <input type="text" name="productName" id="billName" value="${bill.productName}" onblur="isBillName()" onfocus="isFocus(this)" placeholder="123"/>
                     <span >*</span>
                 </div>
                 <div>
-                    <label for="people">商品单位：</label>
-                    <input type="text" name="productUnit" id="people" value="${bill.productUnit}" placeholder="北极"/>
+                    <label for="billCom">商品单位：</label>
+                    <input type="text" name="productUnit" id="billCom" value="${bill.productUnit}" onblur="isBillCom()" onfocus="isFocus(this)" placeholder="北极"/>
                     <span>*</span>
                 </div>
                 <div>
-                    <label for="phone">商品数量：</label>
-                    <input type="text" name="productCount" id="phone" value="${bill.productCount}" placeholder="22"/>
+                    <label for="billNum">商品数量：</label>
+                    <input type="text" name="productCount" id="billNum" value="${bill.productCount}" onblur="isBillNum()" onfocus="isFocus(this)" placeholder="22"/>
                     <span>*</span>
                 </div>
                 <div>
-                    <label for="address">总金额：</label>
-                    <input type="text" name="totalPrice" id="address" value="${bill.totalPrice}" placeholder="200"/>
+                    <label for="money">总金额：</label>
+                    <input type="text" name="totalPrice" id="money" value="${bill.totalPrice}" onblur="isMoney()" onfocus="isFocus(this)" placeholder="200"/>
                     <span>*</span>
                 </div>
                 <div>
@@ -77,8 +78,8 @@
                 </div>
                 <div>
                     <label >是否付款：</label>
-                    <input type="radio" name="isPayment"<c:if test="${bill.isPayment==0}">checked</c:if>/>未付款
-                    <input type="radio" name="isPayment"<c:if test="${bill.isPayment==1}">checked</c:if>/>已付款
+                    <input type="radio" name="isPayment"<c:if test="${bill.isPayment==0}">checked</c:if> value="0"/>未付款
+                    <input type="radio" name="isPayment"<c:if test="${bill.isPayment==1}">checked</c:if> value="1"/>已付款
                 </div>
                 <div class="providerAddBtn">
                     <!--<a href="#">保存</a>-->
@@ -95,6 +96,8 @@
     版权归北大青鸟
 </footer>
 <script src="/static/js/time.js"></script>
-
+<script src="/static/js/jquery-1.8.3.min.js"></script>
+<script src="/static/js/public.js"></script>
+<script src="/static/js/billUpdate.js"></script>
 </body>
 </html>

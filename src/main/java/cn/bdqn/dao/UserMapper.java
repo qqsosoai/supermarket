@@ -49,6 +49,8 @@ public interface UserMapper {
      */
     Integer updateUser(User user)throws Exception;
 
+    Integer updatePassword(@Param("id") Integer id,@Param("password")String password)throws  Exception;
+
     /**
      * 删除用户(默认根据ID)
      * @param user 用户

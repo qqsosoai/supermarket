@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -30,10 +31,10 @@
         <nav>
             <ul class="list">
                 <li ><a href="/bill/main.html">账单管理</a></li>
-                <li><a href="providerList.html">供应商管理</a></li>
-                <li><a href="userList.html">用户管理</a></li>
-                <li><a href="password.html">密码修改</a></li>
-                <li><a href="login.html/out">退出系统</a></li>
+                <li><a href="/pro/main.html">供应商管理</a></li>
+                <c:if test="${sessionScope.user.userType!=3}"><li><a href="/user/main.html">用户管理</a></li></c:if>
+                <li><a href="/password.html">密码修改</a></li>
+                <li><a href="/login.html/out">退出系统</a></li>
             </ul>
         </nav>
     </div>
@@ -49,5 +50,18 @@
     版权归北大青鸟
 </footer>
 <script src="/static/js/time.js"></script>
+<script src="/static/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var flag='${param.flag}';
+        if (flag=="ok"){
+            alert("修改密码成功");
+        }
+        if (flag=="false"){
+            alert("修改密码失败");
+        }
+    })
+</script>
+
 </body>
 </html>

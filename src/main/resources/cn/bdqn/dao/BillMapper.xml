@@ -3,50 +3,53 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.bdqn.dao.BillMapper">
     <select id="findByLimitBillName" resultMap="billToProvider">
-      SELECT m.* from market_bill m
-        <trim prefix="where" prefixOverrides="and|or" >
+    SELECT m.* from market_bill m
+    <trim prefix="where" prefixOverrides="and|or" >
         <if test="billName!=null and billName!=''">
             AND  m.productName LIKE concat('%',#{billName},'%')
         </if>
-        <if test="proId!=null and proId!=''">
+        <if test="proId!=null">
             AND m.proId=#{proId}
         </if>
-        <if test="isPay!=null and isPay!=''">
+        <if test="isPay!=null">
             AND m.isPayment=#{isPay}
         </if>
     </trim>
-        <trim prefix="limit">
-            <if test="pageIndex!=null and pageSize!=null">
-                #{pageIndex},#{pageSize}
-            </if>
-        </trim>
-    </select><!--账单条件分页查询-->
+    <trim prefix="limit">
+        <if test="pageIndex!=null and pageSize!=null">
+            #{pageIndex},#{pageSize}
+        </if>
+    </trim>
+</select><!--账单条件分页查询-->
     <select id="findById" resultMap="billToProvider">
-      select m.* FROM  market_bill m WHERE m.id=#{id}
+        select m.* FROM  market_bill m WHERE m.id=#{id}
     </select><!--根据ID查询具体账单-->
+    <select id="findByproIdCount" resultType="Integer">
+        select count(1) from market_bill where proId=#{proId};
+    </select><!--根据供应商ID查询符合的账单记录-->
     <select id="findBySqlCount" resultType="Integer">
-      SELECT count(1) from market_bill m
+        SELECT count(1) from market_bill m
         <trim prefix="where" prefixOverrides="and|or">
             <if test="billName!=null and billName!=''">
                 AND  m.productName LIKE concat('%',#{billName},'%')
             </if>
-            <if test="proId!=null and proId!=''">
+            <if test="proId!=null">
                 AND m.proId=#{proId}
             </if>
-            <if test="isPay!=null and isPay!=''">
+            <if test="isPay!=null">
                 AND m.isPayment=#{isPay}
             </if>
         </trim>
     </select><!--账单条件查询总记录数-->
     <insert id="addByBill" parameterType="Bill">
-        INSERT  INTO market_bill(proId,billCode,productName,
-            productDesc,
+        INSERT  INTO market_bill(proId,productName,
+        productDesc,
         productUnit,productCount,totalPrice,isPayment,createdBy,creationDate)
         VALUES
-        (#{proId.id},#{billCode},#{productName},
-                #{productDesc},
-            #{productUnit},#{productCount},#{totalPrice},#{isPayment},
-            #{createdBy},now())
+        (#{proId.id},#{productName},
+        #{productDesc},
+        #{productUnit},#{productCount},#{totalPrice},#{isPayment},
+        #{createdBy},now())
     </insert><!--新增账单-->
     <delete id="delByBill" parameterType="Bill">
         DELETE FROM market_bill where
@@ -67,7 +70,7 @@
     <update id="updateByBill" parameterType="Bill">
         UPDATE market_bill
         <trim prefix="set">
-            <if test="proId.id!=null and proId.id!=''">
+            <if test="proId.id!=null">
                 proId=#{proId.id},
             </if>
             <if test="productName!=null and productName!=''">
@@ -79,16 +82,16 @@
             <if test="productUnit!=null and productUnit!=''">
                 productUnit=#{productUnit},
             </if>
-            <if test="productCount!=null and productCount!=''">
+            <if test="productCount!=null">
                 productCount=#{productCount},
             </if>
-            <if test="totalPrice!=null and totalPrice!=''">
+            <if test="totalPrice!=null">
                 totalPrice=#{totalPrice},
             </if>
-            <if test="isPayment!=null and isPayment!=''">
+            <if test="isPayment!=null">
                 isPayment=#{isPayment},
             </if>
-            <if test="modifyBy!=null and modifyBy!=''">
+            <if test="modifyBy!=null">
                 modifyBy=#{modifyBy},
             </if>
         </trim>

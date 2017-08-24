@@ -1,6 +1,7 @@
 package cn.bdqn.service.impl;
 
 import cn.bdqn.bean.Provider;
+import cn.bdqn.dao.BillMapper;
 import cn.bdqn.dao.ProviderMapper;
 import cn.bdqn.service.ProviderService;
 
@@ -14,6 +15,8 @@ import java.util.List;
 public class ProviderServiceImpl implements ProviderService {
     @Resource(name = "providerDao")
     private ProviderMapper dao;
+    @Resource(name = "billDao")
+    private BillMapper billDao;
     public boolean addService(Provider provider) throws Exception {
         boolean flag=false;
         Integer count = dao.addProvider(provider);
@@ -58,6 +61,19 @@ public class ProviderServiceImpl implements ProviderService {
 
     public Provider findById(Integer id) throws Exception {
         return dao.findById(id);
+    }
+
+    public boolean deleteByBilldel(Integer id) throws Exception {//先查询该供应商的账单，当没有账单删除该供应商
+        boolean flag=false;
+        Integer count=billDao.findByproIdCount(id);
+        if (count>0){
+            return flag;
+        }
+        count=dao.delProvider(new Provider(id));
+        if (count>0){
+            flag=true;
+        }
+        return flag;
     }
 
 }

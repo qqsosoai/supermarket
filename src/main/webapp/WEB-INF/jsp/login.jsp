@@ -31,15 +31,17 @@
             </form>
         </section>
     </section>
-<script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+<script src="/static/js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript">
     $(function () {
         var message='${message}';
+        var flag='${param.flag}';
         if (message=='name'){
             $("#message").html('用户名不正确');
         }else if(message=='pass'){
             $("#message").html('密码不正确');
-        }else if (message=='login'){
+        }
+        if (flag=='login'){
             $("#message").html('请先登录');
         }
     });
@@ -54,7 +56,7 @@
         if (validation(/^[a-zA-z|\d]{5,12}$/,$("#user").val())){
             return true;
         }else{
-            alert('用户名输入不正确');
+            alert('用户由字母数字组成，最少5位，最多12位');
             return false
         }
     }

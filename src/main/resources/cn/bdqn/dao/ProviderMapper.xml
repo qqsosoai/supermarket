@@ -50,10 +50,10 @@
             <if test="proAddress!=null and proAddress!=''">
                 proAddress=#{proAddress},
             </if>
-            <if test="proFax!=null and proFax!=''">
+            <if test="proFax!=null">
                 proFax=#{proFax},
             </if>
-            <if test="modifyBy!=null and modifyBy!=''">
+            <if test="modifyBy!=null">
                 modifyBy=#{modifyBy},
             </if>
         </trim>

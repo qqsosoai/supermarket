@@ -31,9 +31,9 @@
             <nav>
                 <ul class="list">
                     <li id="active"><a href="/bill/main.html">账单管理</a></li>
-                    <li><a href="providerList.html">供应商管理</a></li>
-                    <li><a href="userList.html">用户管理</a></li>
-                    <li><a href="password.html">密码修改</a></li>
+                    <li><a href="/pro/main.html">供应商管理</a></li>
+                    <c:if test="${sessionScope.user.userType!=3}"><li><a href="/user/main.html">用户管理</a></li></c:if>
+                    <li><a href="/password.html">密码修改</a></li>
                     <li><a href="/login.html/out">退出系统</a></li>
                 </ul>
             </nav>
@@ -45,7 +45,7 @@
             </div>
             <div class="search">
                 <span>商品名称：</span>
-                <input type="text" id="billName" placeholder="请输入商品的名称"/>
+                <input type="text" id="name" placeholder="请输入商品的名称"/>
                 
                 <span>供应商：</span>
                 <select id="proId" >
@@ -60,7 +60,7 @@
                     <option value="1">已付款</option>
                     <option value="0">未付款</option>
                 </select>
-                <input type="button" onclick="find()" value="查询"/>
+                <input type="button" onclick="find('ajax.html',success)" value="查询"/>
                 <a href="/bill/add.html">添加订单</a>
             </div>
             <!--账单表格 样式和供应商公用-->
@@ -96,10 +96,13 @@
                 </tbody>
             </table>
             <input type="hidden" id="id">
-            <a href="javacript:" onclick="pageFirst()">首页</a>
-            <a href="javacript:" onclick="pagePrev()">上一页</a>
-            <a href="javacript:" onclick="pageNext()">下一页</a>
-            <a href="javacript:" onclick="pageLast()">末页</a>
+            <input type="hidden" id="pageIndex" value="${page.pageIndex}">
+            <input type="hidden" id="pageCount" value="${page.pageCount}">
+            <input type="hidden" id="sqlCount" value="${page.sqlCount}">
+            <a href="javascript:pageFirst('ajax.html',success);" id="pageFirst">首页</a>
+            <a href="javascript:pagePrev('ajax.html',success);" id="pagePrev">上一页</a>
+            <a href="javascript:pageNext('ajax.html',success);" id="pageNext">下一页</a>
+            <a href="javascript:pageLast('ajax.html',success);" id="pageLast">末页</a>
             <span id="page">当前页面${page.pageIndex}/${page.pageCount}  共${page.sqlCount}条记录</span>
         </div>
     </section>
@@ -127,9 +130,6 @@
 <script src="/static/js/public.js"></script>
 <script src="/static/js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript">
-    var pageIndex=${page.pageIndex};//当前页码
-    var pageCount=${page.pageCount};//总页数
-    var sqlCount=${page.sqlCount};//数据库总记录数
     $(function () {
         var add='${param.add}';
         var update='${param.update}';
@@ -149,69 +149,38 @@
     }
     function delbtn(id) {//点击删除按钮
         $("#id").val(id);
-        $("[class='removerChid']").show();
+        $("[class='zhezhao']").show();
         $("#removeBi").show();
     }
-
-    function ajax(Index,billName,proId,isPay) {
-        $.post("/bill/ajax.html",{"pageIndex":Index,
-            "billName":billName,
-            "proId":proId,
-            "isPay":isPay},
-            function (data) {
-            $("#tbody").html("");
-            $(data).each(function () {
-                if (this.id){
-                    $("#tbody").append("<tr>"
+    function success(data) {
+        $("#tbody").html("");
+        $(data).each(function () {
+            if (this.id){
+                $("#tbody").append("<tr>"
                     +"       <td>"+this.billCode+"</td>"
                     +"       <td>"+this.productName+"</td>"
                     +"       <td>"+this.proId.proName+"</td>"
                     +"       <td>"+this.totalPrice+"</td>"
                     +"       <td>"+(this.isPayment==0?"未付款":"已付款")+"</td>"
-                        +"  <td>"+format(this.creationDate)+"</td>"
-                        +"   <td>"
-                        +"   <a href='view.html/"+this.id+"'><img src='/static/img/read.png' alt='查看' title='查看'/></a>"
-                        +"       <a href='update.html/"+this.id+"'><img src='/static/img/xiugai.png' alt='修改' title='修改'/></a>"
-                        +"       <a href='javascript:delbtn("+this.id+");' class='removeBill'><img src='/static/img/schu.png' alt='删除' title='删除'/></a>"
-                        +"   </td>"
-                        +"      </tr>");
-                }else if(this.pageIndex){
-                    pageIndex=this.pageIndex;
-                    pageCount=this.pageCount;
-                    sqlCount=this.sqlCount;
-                    $("#page").html("当前页面"+pageIndex+"/"+pageCount+"  共"+sqlCount+"条记录");
-                }else{
-
-                }
-            });
-        },"json");
-    }
-    function pageNext(){//下一页
-        if (pageIndex+1<=pageCount) {
-            ajax(pageIndex + 1, $("#billName").val(), $("#proId").val(), $("#isPay").val());
-        }else{
-            alert("没有下一页");
-        }
-    }
-    function pagePrev(){//上一页
-        if (pageIndex-1>0){
-            ajax(pageIndex-1,$("#billName").val(),$("#proId").val(),$("#isPay").val());
-        }else{
-            alert("没有上一页");
-        }
-
-    }
-    function pageFirst(){//首页
-        ajax(1,$("#billName").val(),$("#proId").val(),$("#isPay").val());
-    }
-    function pageLast(){//末页
-        ajax(pageCount,$("#billName").val(),$("#proId").val(),$("#isPay").val());
-    }
-    function find() {
-        var $billName=$("#billName").val();
-        var $proId=$("#proId").val();
-        var $isPay=$("#isPay").val();
-        ajax(1,$billName,$proId,$isPay);
+                    +"  <td>"+format(this.creationDate)+"</td>"
+                    +"   <td>"
+                    +"   <a href='view.html/"+this.id+"'><img src='/static/img/read.png' alt='查看' title='查看'/></a>"
+                    +"       <a href='update.html/"+this.id+"'><img src='/static/img/xiugai.png' alt='修改' title='修改'/></a>"
+                    +"       <a href='javascript:delbtn("+this.id+");' class='removeBill'><img src='/static/img/schu.png' alt='删除' title='删除'/></a>"
+                    +"   </td>"
+                    +"      </tr>");
+            }else if(this.pageIndex){
+                $("#pageIndex").val(this.pageIndex);
+                $("#pageCount").val(this.pageCount);
+                $("#sqlCount").val(this.sqlCount);
+                $("#page").html("当前页面"+this.pageIndex+"/"+this.pageCount+"  共"+this.sqlCount+"条记录");
+            }else{
+                $("#tbody").append("<tr>" +
+                    "<td colspan='7'>暂无搜索到符合条件的数据</td>" +
+                    "</tr>");
+                $("#page").html("当前页面1/1  共0条记录");
+            }
+        });
     }
 </script>
 </body>

@@ -11,7 +11,7 @@ public class User implements Serializable{
     private String userCode;//用户账号
     private String userName;//用户姓名
     private String userPassword;//用户密码
-    private Integer sex;//用户姓名
+    private Integer sex;//用户性别
     private Date birthday;//用户出生日期
     private String phone;//用户电话
     private String address;//用户地址
@@ -20,8 +20,12 @@ public class User implements Serializable{
     private Date creationDate;//创建时间
     private Integer modifyBy;//修改者ID
     private Date modifyDate;//修改时间
-    private Integer age;
+    private Integer age;//用户年龄
     public User() {
+    }
+
+    public User(Integer userId) {
+        this.userId = userId;
     }
 
     public User(Integer userId, String userCode, String userName, String userPassword, Integer sex, Date birthday, String phone, String address, Integer userType, Integer createdBy, Date creationDate, Integer modifyBy, Date modifyDate) {

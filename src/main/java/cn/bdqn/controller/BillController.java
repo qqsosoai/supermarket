@@ -2,6 +2,7 @@ package cn.bdqn.controller;
 
 import cn.bdqn.bean.Bill;
 import cn.bdqn.bean.Provider;
+import cn.bdqn.bean.User;
 import cn.bdqn.service.BillService;
 import cn.bdqn.service.ProviderService;
 import cn.bdqn.util.PageUtil;
@@ -12,11 +13,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.json.Json;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class BillController {
     @Resource(name="providerService")
     private ProviderService providerService;
     @RequestMapping("/main.html")//请求list主页面
-    public String view(Model model){
+    public String main(Model model){
         List<Bill> bills=null;
         List<Provider> providers=null;
         try {
@@ -74,11 +75,12 @@ public class BillController {
         return "user/billUpdate";
     }
     @RequestMapping(value = "/update.html",method = RequestMethod.POST)//提交修改
-    public String updateBill(Bill bill){
+    public String updateBill(Bill bill, HttpSession session){
         boolean flag=false;
+        User user=(User) session.getAttribute("user");
         try {
+            bill.setModifyBy(user.getUserId());
             flag=service.updateService(bill);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,9 +102,12 @@ public class BillController {
         return "user/billAdd";
     }
     @RequestMapping(value = "/add.html",method = RequestMethod.POST)//提交新增
-    public String addBill(Bill bill){
+    public String addBill(Bill bill, HttpSession session){
         boolean flag=false;
         try {
+            User user = (User) session.getAttribute("user");
+            System.out.println("当前用户ID"+user.getUserId());
+            bill.setCreatedBy(user.getUserId());
             flag=service.addService(bill);
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,8 +132,8 @@ public class BillController {
             return "redirect:/bill/main.html?del=false";
         }
     }
-    @RequestMapping(value = "/ajax.html",method = RequestMethod.POST)
-    public void limti(Integer pageIndex, String billName, Integer proId,
+    @RequestMapping(value = "/ajax.html",method = RequestMethod.POST)//处理ajax分页请求
+    public void limti(PageUtil util, String name, Integer proId,
                             Integer isPay, HttpServletResponse response){
         List<Bill> list=null;
         if (proId==0){
@@ -137,21 +142,15 @@ public class BillController {
         if (isPay==2){
             isPay=null;
         }
-        PageUtil util=new PageUtil();
-        if (pageIndex==null){
-            util.setPageIndex(1);
-        }else{
-            util.setPageIndex(pageIndex);
-        }
         List<Bill> bills=null;
         try {
-            util.setSqlCount(service.findBySqlCount(billName,proId,isPay));
-            bills = service.findByLimit(billName, proId, isPay, util.getPageIndex(), util.getPageSize());
+            util.setSqlCount(service.findBySqlCount(name,proId,isPay));
+            bills = service.findByLimit(name, proId, isPay, util.getPageIndex(), util.getPageSize());
             String billString = JSON.toJSONString(bills);
             String out =  billString.replace("]",","+JSON.toJSONString(util)+"]");
             log.debug(out);
-            if (out.equals("[]")){
-                out="{flag:}";
+            if (billString.equals("[]")){
+                out="{\"flag\":\"false\"}";
             }
             PrintWriter print = response.getWriter();
             print.print(out);
@@ -161,6 +160,5 @@ public class BillController {
             e.printStackTrace();
         }
     }
-
 
 }

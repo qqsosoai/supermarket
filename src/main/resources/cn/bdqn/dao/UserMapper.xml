@@ -9,8 +9,8 @@
             </if>
         </trim>
         <trim prefix="limit">
-            <if test="pageIndex!=null and pageIndex!='' and pageSize!=null and pageSize!=''">
-                limit #{pageIndex},#{pageSize}
+            <if test="pageIndex!=null and pageSize!=null">
+                #{pageIndex},#{pageSize}
             </if>
         </trim>
     </select><!--根据用户名模糊查询分页-->
@@ -33,7 +33,7 @@
         INSERT INTO  market_user(userCode,userName,userPassword,sex,birthday,
         phone,address,userType,createdBy,creationDate)
         VALUES(#{userCode},#{userName},#{userPassword},#{sex},#{birthday},#{phone}
-        ,#{address},#{userType},#{createdBy},now())
+        ,#{address},#{userType},#{createdBy},now());
     </insert><!--新增用户-->
     <update id="updateUser" parameterType="User">
         UPDATE market_user
@@ -41,10 +41,10 @@
             <if test="userName!=null and userName!=''">
                 userName=#{userName},
             </if>
-            <if test="sex!=null and sex!=''">
+            <if test="sex!=null">
                 sex=#{sex},
             </if>
-            <if test="birthday!=null and birthday!=''">
+            <if test="birthday!=null">
                 birthday=#{birthday},
             </if>
             <if test="phone!=null and phone!=''">
@@ -53,13 +53,19 @@
             <if test="address!=null and address!=''">
                 address=#{address},
             </if>
-            <if test="modifyBy!=null and modifyBy!=''">
+            <if test="userType!=null">
+                userType=#{userType},
+            </if>
+            <if test="modifyBy!=null">
                 modifyBy=#{modifyBy},
             </if>
         </trim>
         modifyDate=now()
         WHERE userId=#{userId}
     </update><!--更新用户-->
+    <update id="updatePassword">
+        UPDATE  market_user SET userPassword=#{password} where userId=#{id};
+    </update>
     <delete id="delUser" parameterType="User">
         DELETE FROM  market_user where
         <trim>

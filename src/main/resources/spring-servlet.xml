@@ -16,7 +16,32 @@
     <context:component-scan base-package="cn.bdqn.controller"/>
     <!--加载扫描注解类-->
     <mvc:annotation-driven conversion-service="converterService"/>
-
+    <!--配置过滤用户是否登录与是否可以进入用户管理页面的拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/user/**"/>
+            <bean class="cn.bdqn.interceptor.SessionInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/bill/**"/>
+            <bean class="cn.bdqn.interceptor.SessionInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/pro/**"/>
+            <bean class="cn.bdqn.interceptor.SessionInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/user/**"/>
+            <bean class="cn.bdqn.interceptor.UserTypeInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.Exception">error/error</prop>
+            </props>
+        </property>
+    </bean>
     <!--<mvc:resources mapping="/static/" location="/static/**"/>-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>

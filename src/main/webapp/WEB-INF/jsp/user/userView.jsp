@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -5,8 +7,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>超市账单管理系统</title>
-    <link rel="stylesheet" href="../../static/css/public.css"/>
-    <link rel="stylesheet" href="../../static/css/style.css"/>
+    <link rel="stylesheet" href="/static/css/public.css"/>
+    <link rel="stylesheet" href="/static/css/style.css"/>
 </head>
 <body>
 <!--头部-->
@@ -14,8 +16,8 @@
     <h1>超市账单管理系统</h1>
 
     <div class="publicHeaderR">
-        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
-        <a href="login.html">退出</a>
+        <p><span>下午好！</span><span style="color: #fff21b"> ${sessionScope.user.userName}</span> , 欢迎你！</p>
+        <a href="/login.html/out">退出</a>
     </div>
 </header>
 <!--时间-->
@@ -29,11 +31,11 @@
         <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
         <nav>
             <ul class="list">
-                <li><a href="billList.html">账单管理</a></li>
-                <li ><a href="providerList.html">供应商管理</a></li>
-                <li id="active"><a href="userList.html">用户管理</a></li>
-                <li><a href="password.html">密码修改</a></li>
-                <li><a href="login.html">退出系统</a></li>
+                <li><a href="/bill/main.html">账单管理</a></li>
+                <li ><a href="/pro/main.html">供应商管理</a></li>
+                <c:if test="${sessionScope.user.userType!=3}"><li id="active"><a href="/user/main.html">用户管理</a></li></c:if>
+                <li><a href="/password.html">密码修改</a></li>
+                <li><a href="/login.html/out">退出系统</a></li>
             </ul>
         </nav>
     </div>
@@ -43,22 +45,28 @@
             <span>用户管理页面 >> 用户信息查看页面</span>
         </div>
         <div class="providerView">
-            <p><strong>用户编号：</strong><span>hanlu</span></p>
-            <p><strong>用户名称：</strong><span>韩露</span></p>
-            <p><strong>用户性别：</strong><span>女</span></p>
-            <p><strong>出生日期：</strong><span>2011年2月1日</span></p>
-            <p><strong>用户电话：</strong><span>12345678906</span></p>
-            <p><strong>用户地址：</strong><span>北极</span></p>
-            <p><strong>用户类别：</strong><span>经理</span></p>
+            <p><strong>用户编号：</strong><span>${user.userCode}</span></p>
+            <p><strong>用户名称：</strong><span>${user.userCode}</span></p>
+            <p><strong>用户性别：</strong><span><c:choose>
+                <c:when test="1">女</c:when>
+                <c:otherwise>男</c:otherwise>
+            </c:choose></span></p>
+            <p><strong>出生日期：</strong><span><fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd"/></span></p>
+            <p><strong>用户电话：</strong><span>${user.phone}</span></p>
+            <p><strong>用户地址：</strong><span>${user.address}</span></p>
+            <p><strong>用户类别：</strong><span><c:choose>
+                <c:when test="1">系统管理员</c:when>
+                <c:when test="2">经理</c:when>
+                <c:otherwise>员工</c:otherwise>
+            </c:choose></span></p>
 
-            <a href="userList.html">返回</a>
+            <a href="/user/main.html">返回</a>
         </div>
     </div>
 </section>
 <footer class="footer">
     版权归北大青鸟
 </footer>
-<script src="../../static/js/time.js"></script>
-
+<script src="/static/js/time.js"></script>
 </body>
 </html>

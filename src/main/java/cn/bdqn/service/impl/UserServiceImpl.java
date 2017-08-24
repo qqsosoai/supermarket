@@ -60,5 +60,13 @@ public class UserServiceImpl implements UserService {
         return dao.findByName(username);
     }
 
+    public boolean updatePassword(Integer id,String password) throws Exception {
+        Integer count=dao.updatePassword(id,password);
+        if (count>0){
+            return true;
+        }
+        return false;
+    }
+
 
 }

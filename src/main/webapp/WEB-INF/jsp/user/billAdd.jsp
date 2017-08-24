@@ -31,9 +31,9 @@
         <nav>
             <ul class="list">
                 <li id="active"><a href="/bill/main.html">账单管理</a></li>
-                <li><a href="providerList.html">供应商管理</a></li>
-                <li><a href="userList.html">用户管理</a></li>
-                <li><a href="password.html">密码修改</a></li>
+                <li><a href="/pro/main.html">供应商管理</a></li>
+                <c:if test="${sessionScope.user.userType!=3}"><li><a href="/user/main.html">用户管理</a></li></c:if>
+                <li><a href="/password.html">密码修改</a></li>
                 <li><a href="/login.html/out">退出系统</a></li>
             </ul>
         </nav>
@@ -44,47 +44,45 @@
             <span>账单管理页面 >> 订单添加页面</span>
         </div>
         <div class="providerAdd">
-            <form action="" method="post" onsubmit="">
+            <form action="/bill/add.html" method="post" onsubmit="return isSubmit()"/>
                 <!--div的class 为error是验证错误，ok是验证成功-->
                 <div class="">
                     <label for="billId">订单编码：</label>
-                    <input type="text" name="billCode" id="billId" required/>
+                    <input type="text" name="billCode" id="billId" onblur="isBillcode()" onfocus="isFocus(this)" required/>
                     <span>*请输入订单编码</span>
                 </div>
                 <div>
                     <label for="billName">商品名称：</label>
-                    <input type="text" name="productName" id="billName" required/>
+                    <input type="text" name="productName" id="billName" onblur="isBillName()" onfocus="isFocus(this)" required/>
                     <span >*请输入商品名称</span>
                 </div>
                 <div>
                     <label for="billCom">商品单位：</label>
-                    <input type="text" name="productUnit" id="billCom" required/>
+                    <input type="text" name="productUnit" id="billCom" onblur="isBillCom()" onfocus="isFocus(this)" required/>
                     <span>*请输入商品单位</span>
-
                 </div>
                 <div>
                     <label for="billNum">商品数量：</label>
-                    <input type="text" name="productCount" id="billNum" required/>
+                    <input type="text" name="productCount" id="billNum" onblur="isBillNum()" onfocus="isFocus(this)" required/>
                     <span>*请输入大于0的正自然数，小数点后保留2位</span>
                 </div>
                 <div>
                     <label for="money">总金额：</label>
-                    <input type="text" name="totalPrice" id="money" required/>
+                    <input type="text" name="totalPrice" id="money" onblur="isMoney()" onfocus="isFocus(this)" required/>
                     <span>*请输入大于0的正自然数，小数点后保留2位</span>
                 </div>
                 <div>
                     <label >供应商：</label>
-                    <select name="proId.id" >
+                    <select name="proId.id">
                         <c:forEach items="${providers}" var="pro" varStatus="s">
                             <option value="${pro.id}">${pro.proName}</option>
                         </c:forEach>
                     </select>
-                    <span>*请选择供应商</span>
                 </div>
                 <div>
                     <label >是否付款：</label>
-                    <input type="radio" name="isPayment"checked />未付款
-                    <input type="radio" name="isPayment"/>已付款
+                    <input type="radio" name="isPayment" checked value="0"/>未付款
+                    <input type="radio" name="isPayment" value="1"/>已付款
                 </div>
                 <div class="providerAddBtn">
                     <!--<a href="#">保存</a>-->
@@ -101,6 +99,8 @@
     版权归北大青鸟
 </footer>
 <script src="/static/js/time.js"></script>
-
+<script src="/static/js/jquery-1.8.3.min.js"></script>
+<script src="/static/js/public.js"></script>
+<script src="/static/js/billUpdate.js"></script>
 </body>
 </html>

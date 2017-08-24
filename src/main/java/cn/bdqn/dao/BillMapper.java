@@ -32,6 +32,14 @@ public interface BillMapper {
     Bill findById(@Param("id") Integer id)throws Exception;
 
     /**
+     * 查询符合供应商ID的账单
+     * @param proId 供应商ID
+     * @return 返回符合账单总数
+     * @throws Exception
+     */
+    Integer findByproIdCount(Integer proId)throws Exception;
+
+    /**
      * 根据条件查询数据库总记录数
      * @param billName 账单名称(模糊查询)
      * @param providerId 供应商ID
@@ -62,5 +70,6 @@ public interface BillMapper {
      * @return 返回影响行数
      */
     Integer updateByBill(Bill bill)throws Exception;
+
 
 }
