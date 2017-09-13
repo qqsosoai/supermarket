@@ -60,7 +60,7 @@
         if (flag=="false"){
             alert("修改密码失败");
         }
-    })
+    });
 </script>
 
 </body>
