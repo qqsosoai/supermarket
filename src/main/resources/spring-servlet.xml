@@ -51,7 +51,7 @@
     <bean id="converterService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <set>
-                <ref bean="dateConverter" />
+                <ref bean="dateConverter"/>
             </set>
         </property>
     </bean>

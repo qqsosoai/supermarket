@@ -34,7 +34,7 @@
                 <li><a href="/bill/main.html">账单管理</a></li>
                 <li id="active"><a href="/pro/main.html">供应商管理</a></li>
                 <c:if test="${sessionScope.user.userType!=3}"><li><a href="/user/main.html">用户管理</a></li></c:if>
-                <li><a href="/password.html">密码修改</a></li>
+                <li><a href="/user/password.html">密码修改</a></li>
                 <li><a href="/login.html/out">退出系统</a></li>
             </ul>
         </nav>

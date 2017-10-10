@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +33,7 @@ public class LoginController {
         if (loginUser!=null){//判断是否有该账号
             if (MyMd5.isMd5String(user.getUserPassword(),loginUser.getUserPassword())){//判断密码是否正确
                 session.setAttribute("user",loginUser);
-                return "redirect:/user/welcome.html";
+                return "redirect:/welcome.html";
             }else{//密码输入不正确
                 model.addAttribute("message","pass");
                 return "login";
@@ -43,15 +44,16 @@ public class LoginController {
         }
 
     }
+    @RequestMapping("/welcome.html")//跳转用户主页面
+    public String welcome(){
+        return "user/welcome";
+    }
     @RequestMapping("/login.html/out")//退出登录
     public String outLogin(HttpSession session){
         session.invalidate();
         return "redirect:/login.html";
     }
-    @RequestMapping("/password.html")//跳转登录页面
-    public String password(){
-        return "user/password";
-    }
+
     @RequestMapping("/validate.html")//验证原密码是否正确
     public void ajax(HttpSession session, String oldPassword, HttpServletResponse response){
         User user = (User) session.getAttribute("user");
@@ -68,26 +70,23 @@ public class LoginController {
         }
     }
     @RequestMapping("/submit.html")//处理用户修改密码请求
-    public String ajax(String oldPassword,String newPassword,String reNewPassword,HttpSession session){
+    @ResponseBody
+    public String ajax(String oldPassword,String newPassword,HttpSession session){
         User user = (User) session.getAttribute("user");
-        boolean flag=false;
-        if (MyMd5.isMd5String(oldPassword,user.getUserPassword())){
+        if (MyMd5.isMd5String(oldPassword,user.getUserPassword())){//判断旧的密码是否正确
             try {
                 newPassword= MyMd5.toMd5String(newPassword);//将用户输入的新密码加密
                 if (service.updatePassword(user.getUserId(),newPassword)){
                     user.setUserPassword(newPassword);
-                    flag=true;
+                    return "success";
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                return "eor";
             }
         }else{//用户跳过前台js验证
-            return "redirect:/login.html.out";
+            return "out";
         }
-        if (flag){
-            return "redirect:/user/welcome.html?flag=ok";
-        }else{
-            return "redirect:/user/welcome.html?flag=error";
-        }
+        return "eor";
     }
 }

@@ -11,7 +11,7 @@ public class Md5Test {
     Logger logger=Logger.getLogger(Md5Test.class);
     @Test
     public void tomd5(){
-        String md5= MyMd5.toMd5String("ceshi");
+        String md5= MyMd5.toMd5String("admin");
         logger.debug(md5.length());
         logger.debug(md5);
     }

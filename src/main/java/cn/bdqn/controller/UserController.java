@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -28,10 +29,7 @@ public class UserController {
     @Resource(name = "userService")
     private UserService service;
     private Logger log=Logger.getLogger(UserController.class);
-    @RequestMapping("/welcome.html")//跳转用户主页面
-    public String welcome(){
-        return "user/welcome";
-    }
+
     @RequestMapping("/main.html")//跳转用户主页面
     public String main(Model model){
         PageUtil util=new PageUtil();
@@ -164,6 +162,10 @@ public class UserController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+    @RequestMapping("/password.html")//跳转修改密码页面
+    public String password(){
+        return "user/password";
+    }
+
 }

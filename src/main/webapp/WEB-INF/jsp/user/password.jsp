@@ -31,7 +31,7 @@
                     <li ><a href="/bill/main.html">账单管理</a></li>
                     <li><a href="/pro/main.html">供应商管理</a></li>
                     <li><a href="/user/main.html">用户管理</a></li>
-                    <li id="active"><a href="/password.html">密码修改</a></li>
+                    <li id="active"><a href="/user/password.html">密码修改</a></li>
                     <li><a href="/login.html/out">退出系统</a></li>
                 </ul>
             </nav>
@@ -42,7 +42,7 @@
                 <span>密码修改页面</span>
             </div>
             <div class="providerAdd">
-                <form action="a" method="post" onsubmit="return isSubmit()">
+                <form>
                     <!--div的class 为error是验证错误，ok是验证成功-->
                     <div class="">
                         <label for="oldPassword">旧密码：</label>
@@ -60,7 +60,7 @@
                         <span >*请输入新确认密码，保证和新密码一致</span>
                     </div>
                     <div class="providerAddBtn">
-                        <input type="submit" value="保存"/>
+                        <input id="submit" type="button" value="保存"/>
                         <input type="button" value="返回" onclick="history.back(-1)"/>
                     </div>
                 </form>
@@ -116,11 +116,39 @@
         var flag=isValidate($("#newPassword").val(),$("#reNewPassword"),"两次密码输入不一致，请重新输入");
         if (flag){return true;}return false;
     }
+    $("#submit").click(isSubmit);
     function isSubmit() {
         var flag=$("#oldPassword").attr("flag");
         if (flag=="true"){
-            if (isPassword()&&isReNewPassword()){return true;}return false;
-        }return false;
+            if (isPassword()&&isReNewPassword()){flag=true;}else{flag=false;}
+        }else{
+            flag=false;
+        }
+        if (!flag){
+            return;
+        }
+        $.ajax({
+            url:"/submit.html",
+            type:"POST",
+            dataType:"html",
+            data:{oldPassword:$("#oldPassword").val(),newPassword:$("#newPassword").val()},
+            beforeSend:function () {
+                $("#submit").unbind("click");
+            },
+            success:function (data) {
+                if (data=="success"){
+                    alert("修改密码成功，密码立即生效");
+                    window.location.href="/welcome.html";
+                }else if(data=="eor"){
+                    alert("密码修改失败，请重试");
+                }else{
+                    window.location.href="/login.html/out";
+                }
+            },
+            error:function () {
+                $("#submit").bind("click",isSubmit);
+            }
+        });
     }
 </script>
 </body>
